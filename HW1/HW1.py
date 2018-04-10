@@ -8,6 +8,7 @@ Created on Mon Apr  9 23:54:24 2018
 from skimage import io
 import numpy as np
 import os
+import math
 
 def loading(dirs):
 
@@ -21,7 +22,7 @@ def loading(dirs):
         if i is 14:
             continue
         file = os.path.join(dirs, 'CroppedYale', 'yaleB%02d' % i, '*.pgm')
-        imgs = io.ImageCollection(file)
+        imgs = io.imread_collection(file)
         imgs = np.array(imgs, dtype=np.float64)
         
         countOfPeople = len(imgs)
@@ -36,7 +37,7 @@ def loading(dirs):
                 trainBelong = [i]
             else:
                 trainBelong = np.concatenate((trainBelong, [i]))
-        print(trainMatrix.shape)
+        #print(trainMatrix.shape)
             
         for j in range(35, countOfPeople):
             if len(testMatrix) is 0:
@@ -47,9 +48,41 @@ def loading(dirs):
             if len(testBelong) is 0:
                 testBelong = [i]
             else:
-                testBelong = np.vstack((testBelong, i))
+                testBelong = np.concatenate((testBelong, [i]))
                 
     return trainMatrix, trainBelong, testMatrix, testBelong
             
         
-loading(os.getcwd())
+trainMatrix, trainBelong, testMatrix, testBelong = loading(os.getcwd())
+trainCount = np.size(trainMatrix, 0)
+testCount = np.size(testMatrix, 0)
+print(trainCount)
+print(testCount)
+
+correctSAD = 0;
+correctSSD = 0;
+
+for test in range(testCount):
+    minSAD = math.inf
+    minSSD = math.inf
+    AIndex = -1
+    SIndex = -1
+    for train in range(trainCount):
+        distance = testMatrix[test] - trainMatrix[train]
+        SAD = np.sum(np.abs(distance))
+        if SAD < minSAD:
+            minSAD = SAD
+            AIndex = train
+            
+        SSD = np.sum(distance**2)
+        if SSD < minSSD:
+            minSSD = SSD
+            SIndex = train
+            
+    if testBelong[test] == trainBelong[AIndex]:
+        correctSAD += 1
+    if testBelong[test] == trainBelong[SIndex]:
+        correctSSD += 1
+    
+print("SAD: %5f%%" %(correctSAD/testCount*100))
+print("SSD: %5f%%" %(correctSSD/testCount*100))
