@@ -11,9 +11,9 @@ import os
 
 def loading(dirs):
 
-    trainMatrix = np.array([], dtype=np.float64)
+    trainMatrix = np.array([])
     trainBelong = np.array([])
-    testMatrix = np.array([], dtype=np.float64)
+    testMatrix = np.array([])
     testBelong = np.array([])
     countOfPeople = 0
     dirs = os.getcwd()
@@ -22,7 +22,7 @@ def loading(dirs):
             continue
         file = os.path.join(dirs, 'CroppedYale', 'yaleB%02d' % i, '*.pgm')
         imgs = io.imread_collection(file)
-        imgs = np.array(imgs, dtype=np.float64)
+        imgs = np.array(imgs, dtype=np.int64)
         
         countOfPeople = len(imgs)
         
@@ -56,7 +56,7 @@ trainMatrix, trainBelong, testMatrix, testBelong = loading(os.getcwd())
 trainCount = np.size(trainMatrix, 0)
 testCount = np.size(testMatrix, 0)
 print("TrainCount: %d" % trainCount)
-print("TestCount: %d" % testCount)
+print("TestCount: %d\n" % testCount)
 
 correctSAD = 0;
 correctSSD = 0;
@@ -81,7 +81,7 @@ for test in range(testCount):
         correctSSD += 1
     
 print("correctSAD: %d" % correctSAD)
-print("correctSSD: %d" % correctSSD)
+print("correctSSD: %d\n" % correctSSD)
     
 print("SAD: %5f%%" %(correctSAD/testCount*100))
 print("SSD: %5f%%" %(correctSSD/testCount*100))
