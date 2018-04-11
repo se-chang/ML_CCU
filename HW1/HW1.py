@@ -19,7 +19,7 @@ def loading(dirs):
     countOfPeople = 0
     dirs = os.getcwd()
     for i in range(1, 40):
-        if i is 14:
+        if i == 14:
             continue
         file = os.path.join(dirs, 'CroppedYale', 'yaleB%02d' % i, '*.pgm')
         imgs = io.imread_collection(file)
@@ -63,19 +63,19 @@ correctSAD = 0;
 correctSSD = 0;
 
 for test in range(testCount):
-    minSAD = math.inf
-    minSSD = math.inf
+    minSAD = -1
+    minSSD = -1
     AIndex = -1
     SIndex = -1
     for train in range(trainCount):
         distance = testMatrix[test] - trainMatrix[train]
         SAD = np.sum(np.abs(distance))
-        if SAD < minSAD:
+        if SAD < minSAD or minSAD == -1:
             minSAD = SAD
             AIndex = train
             
         SSD = np.sum(distance**2)
-        if SSD < minSSD:
+        if SSD < minSSD or minSSD == -1:
             minSSD = SSD
             SIndex = train
             
